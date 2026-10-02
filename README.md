@@ -1,30 +1,51 @@
 # wavearm
 
-base turns, shoulder and elbow tilt. a raspberry pi 5 lives in the base, your mac webcam tells it what to do.
+a little desk robot arm that copies whatever my arm is doing. i wave, it waves back.
 
 ![renders](print/sheet.png)
 
-## files
+it started as a two joint thing that could only wave. then i found an old raspberry pi 5 in a drawer and it turned into a proper three joint arm: the base spins, and the shoulder and elbow tilt. the pi hides in the base and moves the servos, and my macbook webcam does the watching. it finds my shoulder, elbow and wrist, works out the angles, and sends them to the pi over wifi.
 
-- `arm3.py` the design. every size is a variable at the top, change one and rerun `python3 arm3.py`
-- `print/*.stl` print ready, already on their flat faces, no supports anywhere
-- `print/*.step` open in fusion 360 / onshape / autocad (IMPORT)
-- `print/arm3_assembly.step` everything put together with dummy servos and the pi
-- `check3.py` checks nothing collides. passes for shoulder and elbow anywhere in +-90 (the servos full range)
-- `software/` arm copying + head tracking, see software/README.md
+the whole thing is about $40 of parts plus a lot of light grey PLA.
 
-## parts (about $40 at altronics)
+## how it works
 
-| part | code | price |
+```
+mac webcam -> mediapipe finds my arm -> shoulder + elbow angles -> wifi -> pi 5 -> three servos
+```
+
+the design is all code (`arm3.py`, using cadquery), so every size is a number at the top of the file. change one, run it again and you get new print files. `check3.py` swings both joints through their whole range and makes sure nothing crashes into anything.
+
+it can also do head tracking (`software/track.py`), where the base just turns to look at you. more on the software in [software/README.md](software/README.md).
+
+## what you need
+
+| part | where | price |
 |---|---|---|
-| [MG90S metal servo](https://www.altronics.com.au/product/z6444-mg90s-metal-geared-micro-servo) (shoulder) | Z6444 | $13.95 |
-| 9g plastic servo x2 (base, elbow) | Z6392 | $9.95 each |
-| pin to socket jumper strip | P1021 | $4.00 |
-| M3x10 screws, 25 pack | H3120A | $2.60 |
-| raspberry pi 5 + official 27W power supply | | already had |
-| microSD card, 16-32gb | | ~$10 anywhere but altronics |
+| 1x MG90S metal gear servo (shoulder, it holds the whole arm up) | [altronics Z6444](https://www.altronics.com.au/product/z6444-mg90s-metal-geared-micro-servo) | $13.95 |
+| 2x 9g plastic servo (base and elbow, barely any load) | altronics Z6392 | $9.95 each |
+| jumper wires, pin to socket | altronics P1021 | $4.00 |
+| M3x10 screws, 25 pack (it uses 12) | altronics H3120A | $2.60 |
+| raspberry pi 5 + the official 27W power supply | had one | |
+| microSD card, 16 to 32gb | kmart / officeworks, not altronics (theyre $50+ there lol) | ~$10 |
 
-12x M3x10 total. the pi sits on printed pegs, no M2.5 screws needed.
+no soldering, and no tiny M2.5 screws because the pi just sits on printed pegs.
+
+## printing
+
+i print on a bambu a1 mini, so everything is laid out on plates in `print/a1mini/`. 0.2mm layers, 3 walls, 15% gyroid, no supports on anything.
+
+print `plate0_servo_gauge` first. its a strip of slots in slightly different sizes. push each servo into them and the tightest slot it fits is its real size, so you dont need calipers. put those numbers into `arm3.py` before printing plates 2 to 4, since those have the servo pockets.
+
+| plate | whats on it |
+|---|---|
+| plate1_tray_plus | the base the pi lives in (25% infill so its heavy), plus the servo cover and elbow cap |
+| plate2_drum | middle band of the base, holds the base servo |
+| plate3_shoulder | the spinning platter and shoulder tower |
+| plate4_arm | both arm pieces. turn brim on, the forearm has a tall thin bit |
+| plate5_small | light ring, cover, both caps. pause at 1.6mm to swap colour for the logo |
+
+the loose STLs and STEP files (for fusion / onshape) are in `print/` too.
 
 ## wiring
 
@@ -34,44 +55,19 @@ base turns, shoulder and elbow tilt. a raspberry pi 5 lives in the base, your ma
 | shoulder | pin 33 (GPIO 13) | pin 4 | pin 14 |
 | elbow | pin 12 (GPIO 18) | shares pin 2 or 4 | pin 9 |
 
-## a1 mini plates (print/a1mini/)
+the pi only has two 5V pins, so the elbow shares one. strip two jumper wires, twist them together, tape it.
 
-- `plate0_servo_gauge` push each servo into the slots, the tightest one it slides into is its size. tell me the numbers before printing plates 2 to 4
-- `plate1_tray_plus` tray + servo cover + elbow cap (25% infill). safe to print now
-- `plate1_tray` tray on its own
-- `plate2_drum`, `plate3_shoulder`, `plate4_arm` wait for the servo sizes. brim on for plate 4
-- `plate5_small` ring + cover + both caps. pause at 1.6mm for the logo colour
+## putting it together
 
-## print list (bambu light grey PLA, 0.2mm, 3 walls, 15% gyroid)
+1. centre all three servos at 90 degrees before any horns go on, otherwise it waves lopsided
+2. pi onto the pegs in the tray, usb-c lined up with the hole at the back
+3. base servo into the drum, drum onto the tray (4 screws from underneath)
+4. ring into the drum, horn into the bottom of the platter, platter onto the servo, screw it down through the little hole in the top of the tower
+5. shoulder servo slides into the tower from the back, cover clamps it in
+6. elbow servo goes inside the top of the upper arm, then the back plate screws on
+7. forearm onto the elbow, back plate on, pivot screws snug but not tight
+8. press the caps in
 
-| part | notes |
-|---|---|
-| tray | the pi bay, 25% infill so the base is heavy |
-| drum | lid of the tray, holds the base servo |
-| ring | print in white or translucent PLA if you add an led later, grey is fine otherwise |
-| shoulder | platter + shoulder tower, one piece |
-| cover | clamps the shoulder servo in |
-| up_front, up_back | upper arm |
-| fo_front, fo_back | forearm |
-| cap_shoulder + cap_shoulder_logo | two colours, or a filament change at 1.6mm |
-| cap_elbow | |
+## older stuff
 
-print `cap_elbow` first and check it presses into the forearm. if its loose or tight, change the 0.15 next to `CAP_D`.
-
-## build order
-
-1. measure your servos and fix the `S_` numbers at the top of arm3.py (the plastic ones are slightly smaller, the pockets have room for both)
-2. centre all three servos at 90 degrees before any horn goes on
-3. pi onto the pegs in the tray, usb-c lined up with the port at the back
-4. base servo into the drums cradle, two tab screws. drum onto the tray, 4x M3x10 from underneath
-5. ring into the drum, base servo horn into the pocket under the platter, platter onto the spline, horn screw through the hole in the top of the tower
-6. shoulder servo into the tower from the back, cover on (2x M3x10)
-7. elbow servo into the housing at the top of up_front, horn on the outside. up_back on (2x M3x10 into the housing, M3x10 into the shoulder boss as the pivot)
-8. forearm: horn into the pocket in fo_front, push onto the elbow spline, horn screw. fo_back on (2x M3x10 at the tip, M3x10 into the elbow as the pivot, snug not tight)
-9. press both caps in
-
-12x M3x10 total, one 25 pack covers it.
-
-## older versions
-
-`v1/` has the first 2 joint waving arm (esp32 and pi versions). the 3 joint arm replaced it.
+`v1/` has the first version, the two joint waving arm. kept it because the three joint one grew out of it.
