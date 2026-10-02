@@ -14,7 +14,7 @@ the whole thing is about $40 of parts plus a lot of light grey PLA.
 mac webcam -> mediapipe finds my arm -> shoulder + elbow angles -> wifi -> pi 5 -> three servos
 ```
 
-the design is all code (`arm3.py`, using cadquery), so every size is a number at the top of the file. change one, run `python3 arm3.py && python3 plates.py` and you get new print files and a1 mini plates. `check3.py` swings both joints through their whole range and makes sure nothing crashes into anything.
+the design is all code (`arm3.py`, using cadquery), so every size is a number at the top of the file. change one, run `python3 arm3.py && python3 plates.py` and you get new print files packed onto a1 mini plates. `check3.py` swings both joints through their whole range and makes sure nothing crashes into anything.
 
 it can also do head tracking (`software/track.py`), where the base just turns to look at you. more on the software in [software/README.md](software/README.md).
 
@@ -35,15 +35,18 @@ no soldering, and no tiny M2.5 screws because the pi just sits on printed pegs. 
 
 i print on a bambu a1 mini, so everything is laid out on plates in `print/a1mini/`. 0.2mm layers, 3 walls, 15% gyroid, no supports on anything.
 
-print `plate0_servo_gauge` first. its a strip of slots in slightly different sizes. push each servo into them and the tightest slot it fits is its real size, so you dont need calipers. put those numbers into `arm3.py` before printing plates 2 to 4, since those have the servo pockets.
+everything is packed onto 4 plates, as many parts per plate as fit:
 
-| plate | whats on it |
-|---|---|
-| plate1_tray_plus | the base the pi lives in (25% infill so its heavy), plus the servo cover and elbow cap |
-| plate2_drum | middle band of the base, holds the base servo |
-| plate3_shoulder | the spinning platter and shoulder tower |
-| plate4_arm | both arm pieces. turn brim on, the forearm has a tall thin bit |
-| plate5_small | light ring, cover, both caps. pause at 1.6mm to swap colour for the logo |
+![plates](print/plates_preview.png)
+
+| plate | whats on it | when |
+|---|---|---|
+| plate1_now | tray (25% infill so the base is heavy), both servo gauge strips, servo cover, elbow cap | first. nothing on it depends on servo sizes and theres no pause, so you can leave it running |
+| plate2_ring_logo | light ring + logo cap | when youre home, it pauses at 1.6mm to swap colour for the logo |
+| plate3_drum_arm | drum, upper arm front, forearm back | after the gauge test |
+| plate4_shoulder_arm | shoulder + platter, upper arm back, forearm front | after the gauge test. brim on, the forearm has a tall thin bit |
+
+the gauge strips are rows of slots in slightly different sizes. push each servo into them and the tightest slot it fits is its real size, so you dont need calipers. put those numbers into `arm3.py`, run `python3 arm3.py && python3 plates.py`, then print plates 3 and 4.
 
 the loose STLs and STEP files (for fusion / onshape) are in `print/` too.
 
