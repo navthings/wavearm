@@ -1,0 +1,8 @@
+__pycache__/
+.venv*/
+_view/
+*.onnx
+*.task
+calibration.json
+arm_calibration.json
+.DS_Store
