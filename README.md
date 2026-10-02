@@ -14,7 +14,7 @@ the whole thing is about $40 of parts plus a lot of light grey PLA.
 mac webcam -> mediapipe finds my arm -> shoulder + elbow angles -> wifi -> pi 5 -> three servos
 ```
 
-the design is all code (`arm3.py`, using cadquery), so every size is a number at the top of the file. change one, run it again and you get new print files. `check3.py` swings both joints through their whole range and makes sure nothing crashes into anything.
+the design is all code (`arm3.py`, using cadquery), so every size is a number at the top of the file. change one, run `python3 arm3.py && python3 plates.py` and you get new print files and a1 mini plates. `check3.py` swings both joints through their whole range and makes sure nothing crashes into anything.
 
 it can also do head tracking (`software/track.py`), where the base just turns to look at you. more on the software in [software/README.md](software/README.md).
 
@@ -27,9 +27,9 @@ it can also do head tracking (`software/track.py`), where the base just turns to
 | jumper wires, pin to socket | altronics P1021 | $4.00 |
 | M3x10 screws, 25 pack (it uses 12) | altronics H3120A | $2.60 |
 | raspberry pi 5 + the official 27W power supply | had one | |
-| microSD card, 16 to 32gb | kmart / officeworks, not altronics (theyre $50+ there lol) | ~$10 |
+| a usb stick (8gb+) to boot the pi from | had one | |
 
-no soldering, and no tiny M2.5 screws because the pi just sits on printed pegs.
+no soldering, and no tiny M2.5 screws because the pi just sits on printed pegs. the pi boots off a usb stick that plugs into the blue usb port through a window on the right side of the base, so no sd card needed.
 
 ## printing
 
@@ -60,7 +60,7 @@ the pi only has two 5V pins, so the elbow shares one. strip two jumper wires, tw
 ## putting it together
 
 1. centre all three servos at 90 degrees before any horns go on, otherwise it waves lopsided
-2. pi onto the pegs in the tray, usb-c lined up with the hole at the back
+2. pi onto the pegs in the tray, usb-c lined up with the hole at the back and the blue usb ports lined up with the window on the side. plug the boot stick in from outside
 3. base servo into the drum, drum onto the tray (4 screws from underneath)
 4. ring into the drum, horn into the bottom of the platter, platter onto the servo, screw it down through the little hole in the top of the tower
 5. shoulder servo slides into the tower from the back, cover clamps it in

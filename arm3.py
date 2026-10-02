@@ -149,13 +149,20 @@ for u, v in PI_HOLES:
     hx, hy = pi_x0 + u, pi_y1 - v
     tray = tray.union(zcyl(hx, hy, 3.0, TRAY_FLOOR - 0.5, pi_z0)).union(zcyl(hx, hy, 1.15, pi_z0, pi_z0 + PI_T + 1.2))  # pi drops onto pegs, no screws
 usbc_x, usbc_z = pi_x0 + PI_USBC_U, pi_top + 1.6
-tray = tray.cut(cq.Workplane("XZ", origin=(0, R + 2, 0)).center(usbc_x, usbc_z).slot2D(13.0, 7.0).extrude(R))  # the one port
+tray = tray.cut(cq.Workplane("XZ", origin=(0, R + 2, 0)).center(usbc_x, usbc_z).slot2D(13.0, 7.0).extrude(R))  # power in
+# window on the right side for the blue usb 3 stack, so a boot usb stick can plug in from outside.
+# the usb 3 stack sits about 28mm in from the usb-c edge on both the pi 4 and pi 5 layouts
+USB3_V = 28.0
+usb_y = pi_y1 - USB3_V
+usb_win = (cq.Workplane("YZ", origin=(pi_x1 - 1, 0, 0)).center(usb_y, pi_top + 8.0).rect(20.0, 19.0).extrude(R)
+           .edges("|X").fillet(3.0))
+tray = tray.cut(usb_win)
 holes = None
 for row, z in enumerate((9.0, 15.0, 21.0)):
     for i in range(52):
         a = i * 360 / 52 + (360 / 104 if row == 1 else 0)
         a_n = (a + 180) % 360 - 180
-        if 112 < a_n < 142 or any(abs((a_n - b + 180) % 360 - 180) < 7 for b in (45, 135, -135, -45)):
+        if 112 < a_n < 142 or -16 < a_n < 16 or any(abs((a_n - b + 180) % 360 - 180) < 7 for b in (45, 135, -135, -45)):
             continue
         d = cq.Vector(math.cos(math.radians(a)), math.sin(math.radians(a)), 0)
         hole = cq.Solid.makeCylinder(1.5, 8, cq.Vector(0, 0, z) + d * (R - WALL - 2), d)
